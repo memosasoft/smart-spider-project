@@ -51,6 +51,7 @@ def init_program():
     print("WELCOME to smart spider 2.0")       
     print("Python search agent research program")    
     print("Memosasoft.ml - Memosa Services")
+    print("Guillermo Mosquera")
     print("gfm.mail.72@gmail.com")
     
     # user interaction to clean urls lists 
@@ -170,7 +171,7 @@ def sticky_keyword():
     content_keywords.append("picture")
     content_keywords.append("gallery")
     content_keywords.append("wallpaper")  
-    query_keywords.append("representation")    
+    content_keywords.append("representation")    
     
     # adding images keywords for searching site with image content 
     query_keywords.append("article")
