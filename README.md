@@ -14,6 +14,12 @@ smart_spider_2.0 works well for scrapping.
 
 URL, IMAGE, MEDIA, DATA
 
+image_miner_2.0.py
+media_url_spider.py
+smart_spider_1.0.py
+smart_spider_2.0.py
+smart_spider_3.0.py 
+
 Smart spider 3.0 will be less dump its a promise.
 He will be able to extracts, classifies and evaluates web site content.
 
