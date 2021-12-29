@@ -13,6 +13,10 @@ The media_url_spider is still in developpement.
 smart_spider_2.0 works well for scrapping.
 
 URL, IMAGE, MEDIA, DATA
-Smart spider 3.0 will be less dump and will be able to extracts, classifies and evaluates web site content.
+
+Smart spider 3.0 will be less dump its a promise.
+He will be able to extracts, classifies and evaluates web site content.
+
+Memo Sim
 
 
