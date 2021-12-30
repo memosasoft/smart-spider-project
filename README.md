@@ -29,6 +29,13 @@ URL, IMAGE, MEDIA, DATA
 Smart spider 3.0 will be less dump its a promise.
 He will be able to extracts, classifies and evaluates web site content.
 
+LAST UPDATE
+
+- media_spider.py is your best choice
+
+With this small function def link_evaluation(links): I gave intelligence to the spider. 
+Still need to make it more elegante.
+  
 Memo Sim
 
 
