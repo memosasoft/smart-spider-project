@@ -35,7 +35,8 @@ def main():
 
     # loop thru array of urls
     for current_url in url_address:
-        
+        current_url = link_evaluation(current_url)
+        print(current_url)
         # Is it the end of the liste
         if current_url == "" and len(url_address)<=0:
             break
@@ -46,7 +47,7 @@ def main():
         try:
             page = rq.get(current_url, headers={'User-Agent': ua.random},timeout=10)
             html = bs(page.text, 'lxml')
-
+        
             hrefs = html.find_all("a")
             all_hrefs = []
             for href in hrefs:
@@ -54,48 +55,84 @@ def main():
                 links = href.get("href")
                 try:   
                     if not "http" in links:
+                        # AI component
                         links = fix_link(links, current_url)
-                    
-                    if links not in memory:               
-                        url_address.append(links)
+                        print(links)
+        
                         check_media(links)
-                        print("EXtracted URL : " + links)
-                        memory.append(links)
+
+                        links = link_evaluation(links)
+                        if links not in memory:               
+                            url_address.append(links)
+                            memory.append(links)
+                            
+                            links = links.replace("movies/details/","")
+                            links = links.replace("image/details/","")
+                            
+                            if links not in memory: 
+                                url_address.append(links)
+                            
+                                print("EXtracted URL : " + links)
+                                memory.append(links)             
                 except:
+                    # Shuffle de LIST
                     pass
-            
+
             hrefs = html.find_all("link")
             all_hrefs = []
             for href in hrefs:
                 # print(href.get("href"))
                 links = href.get("href")
                 try:
+                     
                     if not "http" in links:
+                        # AI component
                         links = fix_link(links, current_url)
-                    
-                    if links not in memory:               
-                        url_address.append(links)
+                        print(links)
                         check_media(links)
-                        print("EXtracted URL : " + links)
-                        memory.append(links)
+
+                        links = link_evaluation(links)
+                        
+                        if links not in memory:               
+                            url_address.append(links)
+                            memory.append(links)
+                            
+                            links = links.replace("movies/details/","")
+                            links = links.replace("image/details/","")
+                            
+                            if links not in memory: 
+                                url_address.append(links)
+                            
+                                print("EXtracted URL : " + links)
+                                memory.append(links)
                 except:
-                    pass
-        except:
-            print("MAIN LOOP FAILURE")                
-    # open file with list of url
-    url_address =  get_urls_from_file("urls.txt", url_address)
+                    print("MAIN LOOP FAILURE") 
     
+  
+        except:
+            print("MAIN LOOP FAILURE") 
+        
+            # Shuffle de LIST
+            import random
+            random.shuffle(url_address)
+            
+    # open file with list of url
+    url_address = save_urls_from_file(url_address)
+    url_address =  get_urls_from_file("urls.txt", url_address)
+
     # Recursive function
     main()
         
 def fix_link(url, current_url):
     
+    print("fixing link: " + url)
+
     if (url.find('//')==0):
         url = "https:" + url
     if (url.find('/')==0):
         url = current_url + url
     if (url.find('#')==0):
-        url = current_url
+        url = ""
     return url
         
 def check_media(url_extracted):
@@ -129,7 +166,7 @@ def check_media(url_extracted):
         downloadFile(url_extracted)
     if (url_extracted.find(".mpv")>0):
         downloadFile(url_extracted)
-        
+
 def downloadFile(url_extracted):
     
     print("MEDIA FOUND starting PROCESS")
@@ -142,7 +179,9 @@ def downloadFile(url_extracted):
     # Dump invalid urls
     # Request the profile picture of the OP:
     import wget
-    wget.download(url_extracted, './media/' + filename +"."+ ext + " -q --show-progress --progress=dot")
+    #Now use this like below,
+    save_path = './media/'
+    wget.download(url_extracted, save_path + filename[0:10] +"."+ ext)
   
     print("MEDIA FOUND SAVED")
     # extract file name from AFileName
@@ -157,13 +196,13 @@ def downloadFile(url_extracted):
     
     # Dump invalid urls
     with open("ARCHIVE.M3U", "a") as file:    
-        print("FILM TROUVER")
-        print(url_extracted)
+        print("VOD FOUND")
+        print("VOD url: " + url_extracted)
         EXTINF_text = "#EXTINF:-1, group-title=\"" + title + "\""
         file.write(EXTINF_text + "\n")
         file.write(url_extracted + "\n")
         file.close()   
-
+    
 #This function cleans the document title
 def clean_title(title):
     # Get spidered document title
@@ -190,8 +229,11 @@ def get_urls_from_file(list_name, url_address):
     print("Starting loading urls")
     print("with file name: " + list_name)
 
-    counter = 0
     i = 0
+    counter = 0
+    memory = []
+
+    url_address = []
 
     # open file with list of url
     with open("urls.txt", "r") as file: 
@@ -203,59 +245,133 @@ def get_urls_from_file(list_name, url_address):
             counter = counter + 1
                  
             # inset in url list object 
-            url_address.append(url)
+            
+            if url not in memory:
+                url_address.append(url)
+                memory.append(url)
 
             if (counter>10000):
                 counter = 0
-                i= i +1
+                i= i + 1
                 print("Urls loaded : " + str(i*10000))
     
         file.close()
+   
+    lines =""
+    with open("urls.txt", "wb") as file: 
+        file.writelines(lines)
+        file.close()
+
+    memory = []
 
     return url_address
 
-# This function cleans urls liste from doubles and visited links
-def clean_urls_list(list_name):
-
-    print("Starting clean_urls_list")
-    counter = 0
-    i = 0
-
-    url_address = []
-    url_address = get_urls_from_file(list_name, url_address)
-
-    #url_address_visited = []
-    #url_address_visited = get_urls_from_file(list_of_visited_links, url_address_visited)
-
-    # Delete old dictionnary file
-    with open(list_name, "w") as file:
-        for url in url_address:           
-            # Clean the url string
-            url = endode_url(url)
-            # inset in url list object if not double
-            url_address = remove_url_double(url, url_address)
-            
-            #if not url in url_address_visited:
-            file.write(url + "\n")
-        
-            if (counter>10000):
-                counter = 0
-                i= i +1
-                print("Urls loaded : " + str(i*10000))     
-
+# url file loading and cleaning process
+def save_urls_from_file(url_address):
+    memory = []
+    # open file with list of url
+    with open("urls.txt", "a") as file: 
+        # reading each line     
+        for url in url_address: 
+            if url not in memory:
+                file.write(str(url))
+                memory.append(str(url))
         file.close()
+    return url_address
 
-def remove_url_double(list, item):
-    for url in list:
-        if (url==item):
-            list.remove(url)
-            print("Urls double found in list : " + url)
-    return list
-    
 # This function cleans urls liste from doubles and visited links
 def endode_url(url):
     # Clean the url string
     url = str(url.strip())
     return url
+
+def link_evaluation(links):
+    print(links)
+
+    if ".org" in links:
+        return links
+
+    if ".pdf" in links:
+        links = ""
+    if ".txt" in links:
+        links = ""
+    if ".zip" in links:
+        links = ""
+
+    if ".css" in links:
+        links = ""
+    if ".js" in links:
+        links = ""
+    if ".gif" in links:
+        links = ""
+    if ".jpg" in links:
+        links = ""
+    if ".bmp" in links:
+        links = ""
+    if "@" in links:
+        links = ""  
+    if ".png" in links:
+        links = ""   
+    if ".ico" in links:
+        links = ""  
+
+    if "details" in links:
+        return links
+    if "movie" in links:
+        return links
+    if "upload" in links:
+        return links
+    if ".html" in links:
+        return links
+    if ".php" in links:
+        return links
+
+    if "post" in links:
+        links = "" 
+    if "poster" in links:
+        links = "" 
+    if "about" in links:
+        links = "" 
+    if "print" in links:
+        links = "" 
+    if "build" in links:
+        links = "" 
+    if "display" in links:
+        links = "" 
+    if "software" in links:
+        links = "" 
+    if "text" in links:
+        links = "" 
+    if "audio" in links:
+        links = "" 
+    if "service" in links:
+        links = "" 
+    if "view" in links:
+        links = ""            
+    
+    if "facebook" in links:
+        links = "" 
+    if "google" in links:
+        links = "" 
+    if "microsoft" in links:
+        links = "" 
+    if "linke" in links:
+        links = "" 
+    if "youtube" in links:
+        links = "" 
+    if "lifewire" in links:
+        links = "" 
+
+    hit = 0
+
+    for i in links.split("/"):
+        hit = hit + 1
+
+    # URL death value
+    if (hit>=9):
+        links = ""
+        hit = 0
+
+    return links 
 
 main()
