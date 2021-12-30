@@ -33,9 +33,11 @@ LAST UPDATE
 
 - media_spider.py is your best choice
 
-With this small function def link_evaluation(links): I gave intelligence to the spider. 
+With this small function def link_evaluation(links): 
+I gave intelligence to the spider. 
 Still need to make it more elegante.
   
 Memo Sim
 
+Working on paradoxe
 
