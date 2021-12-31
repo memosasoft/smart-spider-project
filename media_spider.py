@@ -14,11 +14,8 @@ ua = UserAgent()
 #This function gets html and text data from wikipedia
 def main():
     global memory
-    url_spider_count = 0
-    url_error_count = 0
     
     url_address = []
-    urls_found = []
     urls_visited = []
 
     print("WELCOME TO media-spider")  
@@ -41,6 +38,8 @@ def main():
         if current_url == "" and len(url_address)<=0:
             break
         
+        urls_visited.append(current_url)
+
         import requests as rq 
         from bs4 import BeautifulSoup as bs
         
@@ -105,10 +104,14 @@ def main():
                             
                                 print("EXtracted URL : " + links)
                                 memory.append(links)
+
+                    
+                    urls_visited = save_urls_from_file(urls_visited)
+
                 except:
                     print("MAIN LOOP FAILURE") 
     
-  
+    
         except:
             print("MAIN LOOP FAILURE") 
         
@@ -174,18 +177,20 @@ def downloadFile(url_extracted):
 
     import uuid
     filename = str(uuid.uuid4())
+    file = url_extracted.split("/")[-1] 
+    
     ext = url_extracted.split(".")[-1] 
-
     # Dump invalid urls
     # Request the profile picture of the OP:
     import wget
     #Now use this like below,
     save_path = './media/'
-    wget.download(url_extracted, save_path + filename[0:10] +"."+ ext)
+    if url_extracted not in memory:
+        wget.download(url_extracted, save_path + file[0:14] +"."+ ext)
+        wget.downmemoryload(url_extracted, save_path + filename)
   
     print("MEDIA FOUND SAVED")
-    # extract file name from AFileName
-    title = url_extracted.split("/")[-1] 
+
     
     from six.moves.html_parser import HTMLParser
     h = HTMLParser()
@@ -275,6 +280,27 @@ def save_urls_from_file(url_address):
         for url in url_address: 
             if url not in memory:
                 file.write(str(url))
+                memory.append(str(url))
+        file.close()
+    return url_address
+
+# url file loading and cleaning process
+def save_urls_from_file(url_address):
+    memory = []
+    
+    # open file with list of url
+    with open("urls_visited.txt", "a") as file: 
+        # reading each line     
+        url = ""
+        file.write(str(url)+"\n")
+        file.close()
+
+    # open file with list of url
+    with open("urls_visited.txt", "a") as file: 
+        # reading each line     
+        for url in url_address: 
+            if url not in memory:
+                file.write(str(url)+"\n")
                 memory.append(str(url))
         file.close()
     return url_address
@@ -375,3 +401,37 @@ def link_evaluation(links):
     return links 
 
 main()
+
+# A VPN can solve this problem 
+# Proton VPN can help : https://protonvpn.com/
+
+def simple_proxy_request(url):
+
+    import requests
+    session = requests.Session()
+
+    session.proxies = {
+        'http': 'http://10.10.10.10:8000',
+        'https': 'http://10.10.10.10:8000',
+    }
+   
+    response = requests.post(url, headers={'User-Agent': ua.random}, proxies=proxies, timeout=120)
+
+def rotative_proxy_request(request_type, url, **kwargs):
+
+    import requests
+
+    ip_addresses = [ "mysuperproxy.com:5000", "mysuperproxy.com:5001", "mysuperproxy.com:5100", "mysuperproxy.com:5010", "mysuperproxy.com:5050", "mysuperproxy.com:8080", "mysuperproxy.com:8001", 
+    "mysuperproxy.com:8000", "mysuperproxy.com:8050" ]
+
+    while True:
+        try:
+            proxy = random.randint(0, len(ip_addresses) - 1)
+            proxies = {"http": ip_addresses(proxy), "https": ip_addresses(proxy)}
+            response = requests.get(request_type, url, proxies=proxies, timeout=5, **kwargs)
+            print(f"Proxy currently being used: {proxy['https']}")
+            break
+        except:
+            print("Error, looking for another proxy")
+   
+    return response
