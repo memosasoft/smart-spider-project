@@ -13,11 +13,12 @@ LAST UPDATE
 
 - media_spider.py is your best choice
 
-I put use fake_useragent and proxy functionality
+I integrated a fake_useragent and proxy functionality
+
+smart-spider-3.1
 
 Smart spider 3.1 will be less dump it's a promise.
 The spider will be able to extract and evaluate web site content in a more elegant way.
-
 The program is too large and must be redesigned in a better way.
 
 Memo Sim @ 2021
