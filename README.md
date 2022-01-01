@@ -1,5 +1,5 @@
 
-smart-spider-3.0
+**smart-spider-3.0**
 
 Smart is maybe too strong a definition. Let's say its not dumb. It chooses the path depending on the keyword found in the URL. It has some more features and some intelligence. 
 
