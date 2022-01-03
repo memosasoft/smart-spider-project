@@ -3,8 +3,6 @@
 
 The repository cointains all my spider programs.
 
-My smart-spider project is a component of my engine project.
-
 **Recommendation**
 The image_miner works very well. 
 
