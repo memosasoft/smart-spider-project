@@ -1,11 +1,9 @@
 
-**smart-spider-3.0**
+**smart-spider-project**
 
-Smart is maybe too strong a definition. Let's say its not dumb. It chooses the path depending on the keyword found in the URL. It has some more features and some intelligence. 
+The repository cointains all my spider programs.
 
-My smart-spider project is a component of my engine project. I am still exploring possibilities. 
-
-More intelligence will be added in the futur.
+My smart-spider project is a component of my engine project.
 
 **Recommendation**
 The image_miner works very well. 
@@ -33,7 +31,4 @@ The program is too large and must be redesigned in a better way.
 Memo Sim @ 2021
 
 Project @ Paradoxe
-SIM-Services Memosa
-https://services-memosa.weebly.com/
-
-
+https://paradoxe-sim.weebly.com/
